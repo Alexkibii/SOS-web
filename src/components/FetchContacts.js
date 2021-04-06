@@ -1,89 +1,49 @@
 import React from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
-
-export default function FetchContacts(props) {
-  const classes = useStyles();
-
+export default function FetchContacts() {
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <form className={classes.form} noValidate>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="fname"
-                name="firstName"
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="lname"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-            </Grid>
-           </Grid>
-          </form>
-      </div>
-  
-    </Container>
+    <React.Fragment>
+      <Typography variant="h6" gutterBottom>
+      Emergency Contacts
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          <TextField required id="cardName" label="Name on card" fullWidth autoComplete="cc-name" />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TextField
+            required
+            id="cardNumber"
+            label="Card number"
+            fullWidth
+            autoComplete="cc-number"
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TextField required id="expDate" label="Expiry date" fullWidth autoComplete="cc-exp" />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TextField
+            required
+            id="cvv"
+            label="CVV"
+            helperText="Last three digits on signature strip"
+            fullWidth
+            autoComplete="cc-csc"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <FormControlLabel
+            control={<Checkbox color="secondary" name="saveCard" value="yes" />}
+            label="Remember credit card details for next time"
+          />
+        </Grid>
+      </Grid>
+    </React.Fragment>
   );
 }
