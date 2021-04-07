@@ -56,6 +56,17 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
+  toolbar:{
+    display: "flex", 
+    flexDirection: "row", 
+    justifyContent: "start",
+    alignItems: "center",
+    width:"100%",        
+  },
+  img: {
+    height: "auto",
+    width: "100%"
+  }
 }));
 
 const steps = ['Admin details', 'Member Details',  'Vehicle Details'];
@@ -91,9 +102,9 @@ function getStepContent(step) {
     <React.Fragment>
       <CssBaseline />
       <AppBar position="absolute" color="default" className={classes.appBar}>
-        <Toolbar>
-          <img src={logo} alt="Logo" />
-          <Typography variant="h6" color="inherit" noWrap>
+        <Toolbar className={classes.toolbar}>
+          <img className= {classes.img} src={logo} alt="Logo" />
+          <Typography className={classes.toolbar} variant="h6" color="inherit" noWrap>
             Flare SOS
           </Typography>
         </Toolbar>
@@ -136,7 +147,7 @@ function getStepContent(step) {
                     onClick={handleNext}
                     className={classes.button}
                   >
-                    {activeStep === steps.length - 1 ? 'SUbscribe' : 'Next'}
+                    {activeStep === steps.length - 1 ? 'Subscribe' : 'Next'}
                   </Button>
                 </div>
               </React.Fragment>

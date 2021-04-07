@@ -1,49 +1,103 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
+import React, {useState} from 'react';
 import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import { Formik } from 'formik';
+
 
 export default function FetchContacts() {
+    
   return (
-    <React.Fragment>
-      <Typography variant="h6" gutterBottom>
-      Emergency Contacts
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <TextField required id="cardName" label="Name on card" fullWidth autoComplete="cc-name" />
-        </Grid>
-        <Grid item xs={12} md={6}>
+  
+    <React.Fragment>      
+
+     
+         <Formik
+      initialValues ={{
+      formalFullName: '',        
+      telephoneNumber: '',
+      dateOfBirth: '',
+      sex: '' 
+      }}
+      validate={values => {
+         const errors = {};
+         if (!values.formalFullName || !values.dateOfBirth || !values.sex) {
+           errors.formalFullName = 'Required';
+         }
+         return errors;
+       }}
+       OnSubmit={(values, { setSubmitting }) => {
+         setTimeout(() => {
+           alert(JSON.stringify(values, null, 2));
+           setSubmitting(false);
+         }, 400);
+       }}
+      >
+        {({
+         values,
+         errors,
+         touched,
+         handleChange,
+         handleBlur,
+         handleSubmit,
+         isSubmitting,
+         /* and other goodies */
+       }) => (
+         <form onSubmit={handleSubmit}>
+  
+    <Typography variant="h6" gutterBottom>
+       Personal Details
+      </Typography>   
+        <Grid item xs={12}>
           <TextField
             required
-            id="cardNumber"
-            label="Card number"
+            id="formalFullName"
+            name="formalFullName"
+            label="Full Name"
+           
             fullWidth
-            autoComplete="cc-number"
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField required id="expDate" label="Expiry date" fullWidth autoComplete="cc-exp" />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            required
-            id="cvv"
-            label="CVV"
-            helperText="Last three digits on signature strip"
-            fullWidth
-            autoComplete="cc-csc"
+            autoComplete="formalFullName"
           />
         </Grid>
         <Grid item xs={12}>
-          <FormControlLabel
-            control={<Checkbox color="secondary" name="saveCard" value="yes" />}
-            label="Remember credit card details for next time"
+          <TextField
+            id="telephoneNumber"
+            name="telephoneNumber"
+            label="Telephone"
+            fullWidth
+            autoComplete="telephoneNumber"
           />
         </Grid>
-      </Grid>
+        <Grid item xs={12}>
+          <TextField
+            required
+            id="role"
+            defaultValue="Member"
+            name="role"
+            label="Role"
+            fullWidth
+            autoComplete="role"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField id="dateOfBirth" name="dateOfBirth" label="Date of Birth" fullWidth required />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            required
+            id="sex"
+            name="sex"
+            label="Sex"
+            fullWidth
+            autoComplete="sex"
+          />
+        </Grid>
+      </form>
+       )}
+        
+         </Formik>
     </React.Fragment>
   );
 }

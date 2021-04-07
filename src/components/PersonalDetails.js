@@ -4,138 +4,99 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import { Formik } from 'formik';
 
-export default function PersonalDetails(props) {
-     const [state , setState] = useState({
-       firstName : "",
-       lastName: "",
-       otherName : "",
-       telephoneNumber: "",
-       dateOfBirth: "",
-       sex: ""
-    })
-    const handleChange = (e) => {
-        const {id , value} = e.target   
-        setState(prevState => ({
-            ...prevState,
-            [id] : value
-        }))
-    }
+
+
+export default function PersonalDetails() {
   return (
-    <React.Fragment>
-      <Typography variant="h6" gutterBottom>
+  
+    <React.Fragment>      
+
+     
+         <Formik
+      initialValues ={{
+      formalFullName: '',        
+      telephoneNumber: '',
+      dateOfBirth: '',
+      sex: '' 
+      }}
+      validate={values => {
+         const errors = {};
+         if (!values.formalFullName || !values.dateOfBirth || !values.sex) {
+           errors.formalFullName = 'Required';
+         }
+         return errors;
+       }}
+       OnSubmit={(values, { setSubmitting }) => {
+         setTimeout(() => {
+           alert(JSON.stringify(values, null, 2));
+           setSubmitting(false);
+         }, 400);
+       }}
+      >
+        {({
+         values,
+         errors,
+         touched,
+         handleChange,
+         handleBlur,
+         handleSubmit,
+         isSubmitting,
+         /* and other goodies */
+       }) => (
+         <form onSubmit={handleSubmit}>
+  
+    <Typography variant="h6" gutterBottom>
        Personal Details
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
+      </Typography>   
+        <Grid item xs={12}>
           <TextField
             required
-            id="firstName"
-            name="firstName"
-            label="First name"
-            value={state.firstName}
-            onChange={handleChange}
+            id="formalFullName"
+            name="formalFullName"
+            label="Full Name"
            
             fullWidth
-            autoComplete="given-name"
+            autoComplete="formalFullName"
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12}>
           <TextField
-            required
-            id="lastName"
-            name="lastName"
-            label="Last name"
-            value={state.lastName}
-            onChange={handleChange}
+            id="telephoneNumber"
+            name="telephoneNumber"
+            label="Telephone"
             fullWidth
-            autoComplete="family-name"
-          />
-        </Grid>
-         <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="lastName"
-            name="lastName"
-            label="Last name"
-            value={state.lastName}
-            onChange={handleChange}
-            fullWidth
-            autoComplete="family-name"
-          />
-        </Grid>
-         <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="lastName"
-            name="lastName"
-            label="Last name"
-            value={state.lastName}
-            onChange={handleChange}
-            fullWidth
-            autoComplete="family-name"
+            autoComplete="telephoneNumber"
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
             required
-            id="address1"
-            name="address1"
-            label="Address line 1"
-           
+            id="role"
+            defaultValue="Admin"
+            name="role"
+            label="Role"
             fullWidth
-            autoComplete="shipping address-line1"
+            autoComplete="role"
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            id="address2"
-            name="address2"
-            label="Address line 2"
-            fullWidth
-            autoComplete="shipping address-line2"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="city"
-            name="city"
-            label="City"
-            fullWidth
-            autoComplete="shipping address-level2"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField id="state" name="state" label="State/Province/Region" fullWidth />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="zip"
-            name="zip"
-            label="Zip / Postal code"
-            fullWidth
-            autoComplete="shipping postal-code"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="country"
-            name="country"
-            label="Country"
-            fullWidth
-            autoComplete="shipping country"
-          />
+          <TextField id="dateOfBirth" name="dateOfBirth" label="Date of Birth" fullWidth required />
         </Grid>
         <Grid item xs={12}>
-          <FormControlLabel
-            control={<Checkbox color="secondary" name="saveAddress" value="yes" />}
-            label="Use this address for payment details"
+          <TextField
+            required
+            id="sex"
+            name="sex"
+            label="Sex"
+            fullWidth
+            autoComplete="sex"
           />
         </Grid>
-      </Grid>
+      </form>
+       )}        
+         </Formik>
     </React.Fragment>
   );
 }
