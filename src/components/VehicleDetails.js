@@ -1,15 +1,30 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
-export default function SubscriberDetails() {
+export default function VehicleDetails(props) {
+     const [state , setState] = useState({
+       firstName : "",
+       lastName: "",
+       otherName : "",
+       telephoneNumber: "",
+       dateOfBirth: "",
+       sex: ""
+    })
+    const handleChange = (e) => {
+        const {id , value} = e.target   
+        setState(prevState => ({
+            ...prevState,
+            [id] : value
+        }))
+    }
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-       Personal Details
+       Vehicle Details
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
@@ -18,6 +33,9 @@ export default function SubscriberDetails() {
             id="firstName"
             name="firstName"
             label="First name"
+            value={state.firstName}
+            onChange={handleChange}
+           
             fullWidth
             autoComplete="given-name"
           />
@@ -28,6 +46,32 @@ export default function SubscriberDetails() {
             id="lastName"
             name="lastName"
             label="Last name"
+            value={state.lastName}
+            onChange={handleChange}
+            fullWidth
+            autoComplete="family-name"
+          />
+        </Grid>
+         <Grid item xs={12} sm={6}>
+          <TextField
+            required
+            id="lastName"
+            name="lastName"
+            label="Last name"
+            value={state.lastName}
+            onChange={handleChange}
+            fullWidth
+            autoComplete="family-name"
+          />
+        </Grid>
+         <Grid item xs={12} sm={6}>
+          <TextField
+            required
+            id="lastName"
+            name="lastName"
+            label="Last name"
+            value={state.lastName}
+            onChange={handleChange}
             fullWidth
             autoComplete="family-name"
           />
@@ -38,6 +82,7 @@ export default function SubscriberDetails() {
             id="address1"
             name="address1"
             label="Address line 1"
+           
             fullWidth
             autoComplete="shipping address-line1"
           />

@@ -8,12 +8,16 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
+import logo from './rescue.png'; // Tell webpack this JS file uses this image
 
 import Typography from '@material-ui/core/Typography';
 
-import SubscriberDetails from './components/SubscriberDetails';
+
 import FetchContacts from './components/FetchContacts';
 import FetchDependants from './components/FetchDependants';
+import PersonalDetails from './components/PersonalDetails';
+import SignInForm from './components/SignInForm';
+import VehicleDetails from './components/VehicleDetails';
 
 
 
@@ -54,16 +58,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const steps = ['Personal details', 'Emergency Contact', 'Dependants details'];
+const steps = ['Admin details', 'Member Details',  'Vehicle Details'];
 
 function getStepContent(step) {
   switch (step) {
     case 0:
-      return <SubscriberDetails />;
+      return <PersonalDetails />;
     case 1:
       return <FetchContacts />;
     case 2:
-      return <FetchDependants />;
+      return <VehicleDetails />;
+    // case 3:
+    //   return <FetchDependants />;
     default:
       throw new Error('Unknown step');
   }
@@ -86,6 +92,7 @@ function getStepContent(step) {
       <CssBaseline />
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar>
+          <img src={logo} alt="Logo" />
           <Typography variant="h6" color="inherit" noWrap>
             Flare SOS
           </Typography>
