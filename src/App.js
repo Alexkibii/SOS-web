@@ -9,17 +9,10 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import logo from './rescue.png'; // Tell webpack this JS file uses this image
-
 import Typography from '@material-ui/core/Typography';
-
-
 import FetchContacts from './components/FetchContacts';
-import FetchDependants from './components/FetchDependants';
 import PersonalDetails from './components/PersonalDetails';
-import SignInForm from './components/SignInForm';
 import VehicleDetails from './components/VehicleDetails';
-
-
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -65,11 +58,11 @@ const useStyles = makeStyles((theme) => ({
   },
   img: {
     height: "auto",
-    width: "100%"
+    
   }
 }));
 
-const steps = ['Admin details', 'Member Details',  'Vehicle Details'];
+const steps = ['Admin details', 'Member Details', 'Vehicle Details'];
 
 function getStepContent(step) {
   switch (step) {
@@ -128,6 +121,7 @@ function getStepContent(step) {
                   Thank you for your order.
                 </Typography>
                 <Typography variant="subtitle1">
+                  Your registration to Flare SOS Emergency Call is successfull. We have emailed you 
                   Your order number is #2001539. We have emailed your order confirmation, and will
                   send you an update when your order has shipped.
                 </Typography>
