@@ -6,7 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import { Formik } from 'formik';
 
 
-export default function FetchContacts() {
+export default function FetchContacts(props) {
     
   return (
   

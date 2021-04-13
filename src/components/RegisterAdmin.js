@@ -1,4 +1,6 @@
 import React from 'react';
+
+import {useLocation} from "react-router-dom";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -7,7 +9,13 @@ import { Formik } from 'formik';
 
 
 
-export default function PersonalDetails() {
+export default function RegisterAdmin(props) {
+
+   const search = useLocation().search;
+  const msisdn = new URLSearchParams(search).get('msisdn');
+
+  console.log("#####" + msisdn);
+
   return (
   
     <React.Fragment>      
@@ -18,11 +26,11 @@ export default function PersonalDetails() {
       formalFullName: '',        
       telephoneNumber: '',
       dateOfBirth: '',
-      sex: '' 
+      gender: '' 
       }}
       validate={values => {
          const errors = {};
-         if (!values.formalFullName || !values.dateOfBirth || !values.sex) {
+         if (!values.formalFullName || !values.dateOfBirth || !values.gender) {
            errors.formalFullName = 'Required';
          }
          return errors;
@@ -64,7 +72,8 @@ export default function PersonalDetails() {
           <TextField
             id="telephoneNumber"
             name="telephoneNumber"
-            label="Telephone"
+                label="Telephone"
+                value={ msisdn}
             fullWidth
             autoComplete="telephoneNumber"
           />
@@ -81,16 +90,25 @@ export default function PersonalDetails() {
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField id="dateOfBirth" name="dateOfBirth" label="Date of Birth" fullWidth required />
+        <TextField
+          id="date"
+          label="Date Of Birth"
+          type="date"
+          defaultValue="2017-05-24"
+          style={{ width: 250 }}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
         </Grid>
         <Grid item xs={12}>
           <TextField
             required
-            id="sex"
-            name="sex"
-            label="Sex"
+            id="gender"
+            name="gender"
+            label="Gender"
             fullWidth
-            autoComplete="sex"
+            autoComplete="gender"
           />
         </Grid>
       </form>

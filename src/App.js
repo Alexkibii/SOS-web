@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import {useLocation} from "react-router-dom";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Paper from '@material-ui/core/Paper';
@@ -10,9 +11,10 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import logo from './rescue.png'; // Tell webpack this JS file uses this image
 import Typography from '@material-ui/core/Typography';
-import FetchContacts from './components/FetchContacts';
-import PersonalDetails from './components/PersonalDetails';
+
 import VehicleDetails from './components/VehicleDetails';
+import RegisterMember from './components/RegisterMember';
+import RegisterAdmin from './components/RegisterAdmin';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -62,34 +64,50 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const steps = ['Admin details', 'Member Details', 'Vehicle Details'];
+const steps = ['Admin details', 'Register Member', 'Vehicle Details'];
 
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <PersonalDetails />;
-    case 1:
-      return <FetchContacts />;
-    case 2:
-      return <VehicleDetails />;
-    // case 3:
-    //   return <FetchDependants />;
-    default:
-      throw new Error('Unknown step');
-  }
-}
 
- function App(props) {
+function App(props) {
+   
+
   const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
+    const { field1, field2, field3, field4, field5, field6, } = props;
 
-  const handleNext = () => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [formValues, setFormValues] = useState({
+    field1, field2, field3, field4, field5, field6
+  });
+
+  const handleNext = (newValues) => {
+    setFormValues({ ...formValues, ...newValues });
     setActiveStep(activeStep + 1);
   };
 
-  const handleBack = () => {
+  const handleBack = (newValues) => {
+    setFormValues({ ...formValues, ...newValues });
     setActiveStep(activeStep - 1);
   };
+
+
+  
+  const search = useLocation().search;
+  const msisdn = new URLSearchParams(search).get('msisdn');
+
+  console.log("#####" + msisdn);
+  
+   function getStepContent(step) {
+    const isLastStep = (activeStep === steps.length - 1);
+    switch (step) {
+      case 0:
+        return <RegisterAdmin {...formValues} activeStep={activeStep} isLastStep={isLastStep} handleBack={handleBack} handleNext={handleNext}/>;
+      case 1:
+        return <RegisterMember {...formValues} activeStep={activeStep} isLastStep={isLastStep} handleBack={handleBack} handleNext={handleNext}/>;
+      case 2:
+        return <VehicleDetails {...formValues} activeStep={activeStep} isLastStep={isLastStep} handleBack={handleBack} handleNext={handleNext}/>;
+      default:
+        throw new Error('Unknown step');
+    }
+  }
 
   return (
     <React.Fragment>
@@ -97,9 +115,7 @@ function getStepContent(step) {
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <img className= {classes.img} src={logo} alt="Logo" />
-          <Typography className={classes.toolbar} variant="h6" color="inherit" noWrap>
-            Flare SOS
-          </Typography>
+        
         </Toolbar>
       </AppBar>
       <main className={classes.layout}>
@@ -131,7 +147,8 @@ function getStepContent(step) {
                 {getStepContent(activeStep)}
                 <div className={classes.buttons}>
                   {activeStep !== 0 && (
-                    <Button onClick={handleBack} className={classes.button}>
+                    <Button variant="contained"
+                    color="primary" onClick={handleBack} className={classes.button}>
                       Back
                     </Button>
                   )}
