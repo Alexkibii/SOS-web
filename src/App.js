@@ -15,8 +15,14 @@ import Typography from '@material-ui/core/Typography';
 import VehicleDetails from './components/VehicleDetails';
 import RegisterMember from './components/RegisterMember';
 import RegisterAdmin from './components/RegisterAdmin';
+import './components/styles.css';
 
 const useStyles = makeStyles((theme) => ({
+  palette: {
+    primary: {
+      main: "#0d8bcd",
+    },
+  },
   appBar: {
     position: 'relative',
   },
@@ -114,7 +120,7 @@ function App(props) {
       <CssBaseline />
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          <img className= {classes.img} src={logo} alt="Logo" />
+          <img className="image" src={logo} alt="Logo" />
         
         </Toolbar>
       </AppBar>
