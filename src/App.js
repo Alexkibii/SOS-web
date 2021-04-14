@@ -11,14 +11,14 @@ import {
  function App() {
    return(
      <Router>
-       <Switch>
+       {/* <Switch>
          <Route path="/">
            <Home />
-          </Route>
+          </Route> */}
           <Route path="/sub">
             <Subscription />
           </Route>
-       </Switch>
+       {/* </Switch> */}
           
      </Router>
    ) 

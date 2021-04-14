@@ -7,10 +7,26 @@
     font-weight: bolder;
 }
 .center {
-  margin: 0;
+  margin: 0 !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  -ms-transform: translate(-50%, -50%) !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.absolute {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  width: 100%;
+  bottom: 40px;
+} 
+
+.top{
+  position: absolute;
+  width: 100%;
+  top: 40px;
+}
+
+.MuiSnackbarContent-root{
+  background-color: red !important;
 }

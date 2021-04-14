@@ -4,6 +4,7 @@ import Fab from '@material-ui/core/Fab';
 import Typography from '@material-ui/core/Typography';
 import '../../styles.css';
 import  MoreInformation  from './MoreInfoDialog';
+import SosSnackbar from './PressedButton';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,18 +20,23 @@ const useStyles = makeStyles((theme) => ({
 export default function Subscription() {
   const classes = useStyles();
 
+  function test () {
+    console.log('button pressed')
+  }
+
   return (
     <div className={classes.root}>
-  <Typography>For immediate emergency rescue in a medical, fire, security, or roadside emergency,
+  <Typography align="center" className="top">For immediate emergency rescue in a medical, fire, security, or roadside emergency,
      press/hold the SOS button.</Typography>
-     <div className='center'>
-          <Fab color="red" disableRipple={false}>
+     {/* <div className='center'>
+          <Fab color="red" disableRipple={false} onClick={test}>
         <Typography>SOS</Typography>
       </Fab>
-     </div>
+     </div> */}
+     <SosSnackbar />
        
      
-    <Typography>Emergency response powered by rescue co
+    <Typography align="center" className="absolute">Emergency response powered by rescue co
                 <MoreInformation />     
 
      </Typography>
