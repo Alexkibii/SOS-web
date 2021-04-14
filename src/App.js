@@ -18,6 +18,11 @@ import RegisterAdmin from './components/RegisterAdmin';
 import './components/styles.css';
 
 const useStyles = makeStyles((theme) => ({
+  palette: {
+    primary: {
+      main: "#0d8bcd",
+    },
+  },
   appBar: {
     position: 'relative',
   },
