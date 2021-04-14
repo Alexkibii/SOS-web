@@ -120,8 +120,7 @@ function App(props) {
       <CssBaseline />
       <AppBar position="absolute" color="default" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          <img className="image" src={logo} alt="Logo" />
-        
+          <img className="image" src={logo} alt="Logo" />        
         </Toolbar>
       </AppBar>
       <main className={classes.layout}>
