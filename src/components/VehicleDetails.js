@@ -2,53 +2,88 @@ import React, {useState} from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+import { Formik } from 'formik';
+import { useForm } from 'react-hook-form';
 
 
-export default function VehicleDetails(props) {
-     const [state , setState] = useState({
-       licensePlate : "",
-       make: "",
-       model : "",
-       color: "",
-       manufacturingYear: ""
+export default function VehicleDetails({ formValues, setFormValues }) {
+    //  const [state , setState] = useState({
+    //    licensePlate : "",
+    //    make: "",
+    //    model : "",
+    //    color: "",
+    //    manufacturingYear: ""
      
-    })
+    // })
     const handleChange = (e) => {
         const {id , value} = e.target   
-        setState(prevState => ({
+        setFormValues(prevState => ({
             ...prevState,
             [id] : value
         }))
     }
   return (
     <React.Fragment>
+
+      
+         <Formik
+     initialValues={formValues}
+      validate={values => {
+         const errors = {};
+         if (!values.formalFullName || !values.dateOfBirth || !values.gender) {
+           errors.formalFullName = 'Required';
+         }
+         return errors;
+       }}
+       OnSubmit={(values, { setSubmitting }) => {
+         setTimeout(() => {
+            setFormValues(values);
+           alert(JSON.stringify(values, null, 2));
+           setSubmitting(false);
+         }, 400);
+       }}
+      >
+        {({
+         values,
+         errors,
+         touched,
+         handleChange,
+         handleBlur,
+         handleSubmit,
+         isSubmitting,
+         /* and other goodies */
+       }) => (
+         <form onSubmit={handleSubmit}>
+
+
       <Typography variant="h6" gutterBottom>
        Vehicle Details
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={ 6}>
           <TextField
-            required
+                required
+                
             id="licensePlate"
             name="licensePlate"
             label="License Plate"
-            value={state.licensePlate}
-            onChange={handleChange}
-           
+            
+            
             fullWidth
-            autoComplete="given-name"
+            autoComplete="licensePlate"
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            required
+                required
+                  
             id="make"
             name="make"
             label="Make"
-            value={state.make}
-            onChange={handleChange}
+          
+            
             fullWidth
-            autoComplete="family-name"
+            autoComplete="make"
           />
         </Grid>
          <Grid item xs={12} sm={6}>
@@ -57,8 +92,8 @@ export default function VehicleDetails(props) {
             id="model"
             name="model"
             label="Model"
-            value={state.model}
-            onChange={handleChange}
+     
+            // onChange={handleChange}
             fullWidth
             autoComplete="family-name"
           />
@@ -69,8 +104,8 @@ export default function VehicleDetails(props) {
             id="color"
             name="color"
             label="Color"
-            value={state.color}
-            onChange={handleChange}
+          
+            // onChange={handleChange}
             fullWidth
             autoComplete="family-name"
           />
@@ -81,13 +116,16 @@ export default function VehicleDetails(props) {
             id="manufacturingYear"
             name="manufacturingYear"
             label="Year Of Manufacture"
-           
+             
             fullWidth
-            autoComplete="shipping address-line1"
+            autoComplete="manufacturingYear"
           />
         </Grid>
        
-      </Grid>
+            </Grid>
+             </form>
+       )}        
+         </Formik>
     </React.Fragment>
   );
 }

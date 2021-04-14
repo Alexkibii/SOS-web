@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 
 //import "./styles.css";
 
-export default function RegisterMember() {
+export default function RegisterMember({ formValues, setFormValues }) {
  
     const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -60,8 +60,9 @@ export default function RegisterMember() {
     
   }
 }));
- const classes = useStyles();
-  const [indexes, setIndexes] = React.useState([]);
+  const classes = useStyles();
+  
+ const [indexes, setIndexes] = React.useState([]);
   const [counter, setCounter] = React.useState(0);
   const { register, handleSubmit } = useForm();
 
@@ -92,12 +93,7 @@ export default function RegisterMember() {
 
      
          <Formik
-      initialValues ={{
-      formalFullName: '',        
-      telephoneNumber: '',
-      dateOfBirth: '',
-      gender: '' 
-      }}
+             initialValues={formValues}
       validate={values => {
          const errors = {};
          if (!values.formalFullName || !values.dateOfBirth || !values.gender) {
@@ -107,6 +103,7 @@ export default function RegisterMember() {
        }}
        OnSubmit={(values, { setSubmitting }) => {
          setTimeout(() => {
+           setFormValues(values);
            alert(JSON.stringify(values, null, 2));
            setSubmitting(false);
          }, 400);
@@ -159,7 +156,7 @@ export default function RegisterMember() {
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField id="dateOfBirth" name="dateOfBirth" label="Date of Birth" fullWidth required />
+          <TextField id="dateOfBirth" type = "date" name="dateOfBirth"   label="Date of Birth" fullWidth required />
         </Grid>
         <Grid item xs={12}>
           <TextField
@@ -170,14 +167,16 @@ export default function RegisterMember() {
             fullWidth
             autoComplete="gender"
           />
-                              </Grid>
-                              
-                              <Grid item xs={12}>
+        </Grid>
+        
+        <Grid item xs={12}>
           <Button variant="contained"
-                    color="primary" onClick={removeMember(index)} className={classes.button}>
+                  color="primary"
+                  onClick={removeMember(index)}
+                  className={classes.button}>
               Remove
-                    </Button>
-                              </Grid>
+          </Button>
+      </Grid>
     
       </form>
        )}
@@ -189,13 +188,18 @@ export default function RegisterMember() {
       })}
           
           <Button variant="contained"
-                    color="primary" onClick={addMember} className={classes.button}>
+              color="primary"
+              onClick={addMember}
+              className={classes.button}>
               Add Member
-                    </Button>
+          </Button>
+      
           <Button variant="contained"
-                    color="primary" onClick={clearMembers} className={classes.button}>
-                     Clear Members
-                    </Button>
+              color="primary"
+              onClick={clearMembers}
+              className={classes.button}>
+             Clear Members
+          </Button>
     
     </form>
   );
