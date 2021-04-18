@@ -1,151 +1,227 @@
-
 import React from 'react';
-
-import {useLocation} from "react-router-dom";
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-
-import { Formik } from 'formik';
-import { useForm } from 'react-hook-form';
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import { Grid, Typography } from '@material-ui/core';
+import { InputField,  SelectField, DatePickerField } from '../Comp/components/FormFields';
 
 
+import { useForm } from "react-hook-form";
 
-export default function RegisterAdmin({ formValues, setFormValues }) {
 
-  const search = useLocation().search;
-  const msisdn = new URLSearchParams(search).get('msisdn');
+// const cities = [
+//   {
+//     value: undefined,
+//     label: 'None'
+//   },
+//   {
+//     value: '1',
+//     label: 'New York'
+//   },
+//   {
+//     value: '2',
+//     label: 'Chicago'
+//   },
+//   {
+//     value: '3',
+//     label: 'Saigon'
+//   }
+// ];
 
-   const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
+const sexes = [
+  {
+    value: undefined,
+    label: 'None'
+  },
+  {
+    value: '1',
+    label: 'Male'
+  },
+  {
+    value: '2',
+    label: 'Female'
+  },
+  {
+    value: '3',
+    label: 'Other'
+  }
+];
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
+ const useStyles = makeStyles((theme) => ({
+  appBar: {
+    position: 'relative',
+  },
+  layout: {
+    width: 'auto',
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
+      width: 600,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
+  },
+  paper: {
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(3),
+    padding: theme.spacing(2),
+    [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
+      marginTop: theme.spacing(6),
+      marginBottom: theme.spacing(6),
+      padding: theme.spacing(3),
+    },
+  },
+  stepper: {
+    padding: theme.spacing(3, 0, 5),
+  },
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  button: {
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
+  },
+  toolbar:{
+    display: "flex", 
+    flexDirection: "row", 
+    justifyContent: "start",
+    alignItems: "center",
+    width:"100%",        
+  },
+  img: {
+    height: "auto",
+    
+  }
+}));
+
+export default function RegisterAdmin(props) {
+
+
+   const {
+     formField: {
+       members: [{
+    telephoneNumber,
+    role,
+    formalFullName,
+    familiarShortName,
+    emails,
+    dateOfBirth,
+    sex,
+    otherSexText,
+    alternativeIdentifiers,
+      }]
+     }
+  } = props;
+
+
+     const classes = useStyles();
+  
+//  const [indexes, setIndexes] = React.useState([]);
+//   const [counter, setCounter] = React.useState(0);
+  const { register, handleSubmit } = useForm();
+
+  const onSubmit = data => {
+    console.log(data.body.FirstName);
   };
 
-  //console.log("#####" + msisdn + formValues);
-  
-  const { register, handleSubmit } = useForm({
-    defaultValues: formValues
-  })
+  // const addMember = () => {
+  //   setIndexes(prevIndexes => [...prevIndexes, counter]);
 
-  const fullName = formValues.body.FirstName + ' '+formValues.body.MiddleName  + ' '+formValues.body.LastName;
-  return (
-  
-    <React.Fragment>      
+  //   setCounter(prevCounter => prevCounter + 1);
+  // };
 
-     
-         <Formik
-     initialValues={formValues}
-      validate={values => {
-        //  const errors = {};
-        //  if (!values.formalFullName || !values.dateOfBirth || !values.gender) {
-        //    errors.formalFullName = 'Required';
-        //  }
-        //  return errors;
-       }}
-       OnSubmit={(values, { setSubmitting }) => {
-         setTimeout(() => {
-            setFormValues(values);
-           alert(JSON.stringify(values, null, 2));
-           setSubmitting(false);
-         }, 400);
-       }}
-      >
-        {({
-         values,
-         errors,
-         touched,
-         handleChange,
-         handleBlur,
-         handleSubmit,
-         isSubmitting,
-         /* and other goodies */
-       }) => (
-         <form onSubmit={handleSubmit}>
-  
-    <Typography variant="h6" gutterBottom>
-       Personal Details
-      </Typography>   
-        <Grid item xs={12}>
-          <TextField
-                required
-                
-            id="formalFullName"
-            name="formalFullName"
-            label="Full Name"
-            defaultValue={ fullName}
-            onChange={handleChange}
+  // const removeMember = index => () => {
+  //   setIndexes(prevIndexes => [...prevIndexes.filter(item => item !== index)]);
+  //   setCounter(prevCounter => prevCounter - 1);
+  // };
+
+  // const clearMembers = () => {
+  //   setIndexes([]);
+  // };
+
+   return (
+     <form onSubmit={handleSubmit(onSubmit)}>
+{/* {indexes.map(index => { */}
+  {/* //       const fieldName = `members[${index}]`;
+          return ( */}
+             <React.Fragment >      
+
+      <Typography variant="h6" gutterBottom>
+        Member Details
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={6}>
+          <InputField name={telephoneNumber.name} label={telephoneNumber.label}  fullWidth />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <InputField name={formalFullName.name} label={formalFullName.label} fullWidth />
+        </Grid>
+         <Grid item xs={12} sm={6}>
+          <InputField name={familiarShortName.name} label={familiarShortName.label} fullWidth />
+        </Grid>
+         <Grid item xs={12} sm={6}>
+          <InputField name={emails.name} label={emails.label} fullWidth />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <DatePickerField
+            name={dateOfBirth.name}
+            label={dateOfBirth.label}
+            format="dd/MM/yy"
+            views={['year', 'month', 'date']}
+            minDate={new Date()}
+            maxDate={new Date('2050/12/31')}
             fullWidth
-            autoComplete="formalFullName"
           />
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            id="telephoneNumber"
-            name="telephoneNumber"
-            label="Telephone"
-            defaultValue={msisdn}
-            value={msisdn}
+          <InputField name={emails.name} label={emails.label} fullWidth />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <SelectField
+            name={sex.name}
+            label={sex.label}
+            data={sexes}
             fullWidth
-            autoComplete="telephoneNumber"
           />
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            id="farmiliarShortName"
-            name="farmiliarShortName"
-            label="Farmiliar Short Name"
+            <Grid item xs={12} sm={6}>
+          <InputField name={otherSexText.name} label={otherSexText.label} fullWidth />
+        </Grid>
+        
+        <Grid item xs={12} sm={6}>
+          <InputField name={alternativeIdentifiers.name} label={alternativeIdentifiers.label} fullWidth />
+        </Grid>
+       
+      </Grid>
+        
+        {/* <Grid item xs={12}>
+          <Button variant="contained"
+                  color="primary"
+                  onClick={removeMember(index)}
+                  className={classes.button}>
+              Remove
+          </Button>
+      </Grid> */}
+     </React.Fragment>
               
-            fullWidth
-            autoComplete="farmiliarShortName"
-          />
-         </Grid>
-         <Grid item xs={12}>
-          <TextField
-            id="email"
-            name="email"
-            label="Email"
-            fullWidth
-            autoComplete="email"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            id="role"
-            defaultValue="Admin"
-            name="role"
-            label="Role"
-            fullWidth
-            autoComplete="role"
-          />
-        </Grid>
      
-        <Grid item xs={12}>
-         <TextField
-            id="date"
-            label="Birthday"
-            value={formValues.body.Birthday}
-            defaultValue={formValues.body.Birthday}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            id="gender"
-            name="gender"
-            label="Gender"
-            fullWidth
-            defaultValue={formValues.body.Gender}
-            autoComplete="gender"
-          />
-        </Grid>
-      </form>
-       )}        
-         </Formik>
-    </React.Fragment>
+      {/* })} */}
+{/*           
+          <Button variant="contained"
+              color="primary"
+              onClick={addMember}
+              className={classes.button}>
+              Add Member
+          </Button>
+      
+          <Button variant="contained"
+              color="primary"
+              onClick={clearMembers}
+              className={classes.button}>
+             Clear Members
+          </Button> */}
+    
+    </form>
   );
 }
+

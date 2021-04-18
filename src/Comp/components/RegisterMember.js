@@ -2,23 +2,30 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { Grid, Typography } from '@material-ui/core';
-import { InputField,  SelectField, DatePickerField } from '../components/FormFields';
+import { InputField,  SelectField, DatePickerField } from '../Comp/components/FormFields';
 
 
 import { useForm } from "react-hook-form";
 
 
-
-const roles = [
-  {
-    value: undefined,
-    label: 'None'
-  },
-  {
-    value: '11',
-    label: 'Member'
-  }
-];
+// const cities = [
+//   {
+//     value: undefined,
+//     label: 'None'
+//   },
+//   {
+//     value: '1',
+//     label: 'New York'
+//   },
+//   {
+//     value: '2',
+//     label: 'Chicago'
+//   },
+//   {
+//     value: '3',
+//     label: 'Saigon'
+//   }
+// ];
 
 const sexes = [
   {
@@ -92,7 +99,7 @@ export default function RegisterMember(props) {
 
    const {
      formField: {
-       
+       members: [{
     telephoneNumber,
     role,
     formalFullName,
@@ -102,7 +109,7 @@ export default function RegisterMember(props) {
     sex,
     otherSexText,
     alternativeIdentifiers,
-    
+      }]
      }
   } = props;
 
@@ -144,7 +151,7 @@ export default function RegisterMember(props) {
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
-          <InputField name={telephoneNumber.name} label={telephoneNumber.label}  fullWidth />
+          <InputField name={telephoneNumber.name} label={telephoneNumber.label} defaultValue={'formField.members.telephoneNumber'} fullWidth />
         </Grid>
         <Grid item xs={12} sm={6}>
           <InputField name={formalFullName.name} label={formalFullName.label} fullWidth />
@@ -174,14 +181,6 @@ export default function RegisterMember(props) {
             name={sex.name}
             label={sex.label}
             data={sexes}
-            fullWidth
-          />
-                </Grid>
-                  <Grid item xs={12} sm={6}>
-          <SelectField
-            name={role.name}
-            label={role.label}
-            data={roles}
             fullWidth
           />
         </Grid>
