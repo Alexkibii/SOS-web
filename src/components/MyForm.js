@@ -1,46 +1,44 @@
 import React, { useState, useEffect } from 'react';
-
-import {useLocation} from "react-router-dom";
+import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 import {
   Divider,
   Button,
   Grid,
-
-  TextField,
+  Typography,
   CircularProgress,
 } from '@material-ui/core';
-import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
-import { FieldArray, Form, Formik, getIn } from 'formik';
+import { InputField, SelectField, DatePickerField } from './FormFields';
+import { FieldArray, Form, Field, Formik, getIn, useFormikContext } from 'formik';
+
 import * as Yup from 'yup';
-import { DatePickerField, SelectField } from './FormFields';
+
+
 
 const roles = [
+  ,
   {
-    value: undefined,
-    label: 'None',
-  },
-  {
-    value: '1',
-    label: 'Member',
-  },
-  {
-    value: '2',
+    value: 'ADMIN',
     label: 'Admin',
+  },
+  {
+    value: 'MEMBER',
+    label: 'Member',
   },
 ];
 
 const sexes = [
   {
-    value: '1',
+    value: 'M',
     label: 'Male',
   },
   {
-    value: '2',
+    value: 'F',
     label: 'Female',
   },
   {
-    value: '3',
+    value: 'Other',
     label: 'Other',
   },
 ];
@@ -48,13 +46,13 @@ const sexes = [
 const validationSchema = Yup.object().shape({
   people: Yup.array().of(
     Yup.object().shape({
-      //   firstName: Yup.string().required('First name is required'),
-      //   lastName: Yup.string().required('Last name is required'),
+      formalFullName: Yup.string().required('First name is required'),
+      familiarShortName: Yup.string().required('Last name is required'),
     })
   ),
 });
 
-const debug = false;
+const debug = true;
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -69,98 +67,113 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MyForm = () => {
+const MyForm = (props) => {
   const classes = useStyles();
-
-     const url = 'http://localhost:4000/kyc/subscriberinfo?msisdn=0114959286'
-  const flareurl = 'https://ci-dev-safaricom-eyrfchsuu4.flaredispatch.com/v1/memberships'
-   const search = useLocation().search;
+  const registerurl = 'http://localhost:4000/subscribe';
+  const flareurl =
+    'https://ci-dev-safaricom-eyrfchsuu4.flaredispatch.com/v1/memberships';
+  const search = useLocation().search;
   const msisdn = new URLSearchParams(search).get('msisdn');
 
-  console.log("#####" + msisdn);
+  console.log('#####' + msisdn);
 
 
-  const [kycDetails, setkycDetails] = useState('');
-  
+  const [fullName, setFullName] = useState('');
+  const [IDNumber, setIDNumber] = useState('');
+  const [dob, setDob] = useState('');
+  const [gender, setGender] = useState('');
 
-
-
-const getKYCDetails = () => {
+  const registerUser = (values) => {
+    console.log(values);
     axios
-        .get(url)
-        .then((response) => {
-           setkycDetails(response.data);
-           console.log(response.data); //prints the above json reults in console
-        })
-        .catch((error) => {
-            console.log(" error", error);
-        });
+      .post(registerurl, values)
+      .then((response) => {
+    
+        console.log(response.data); //prints the above json reults in console
+      })
+      .catch((error) => {
+        console.log(' error', error);
+      });
   };
-  
-  
-  const registerUser = (formValues) => {
-    console.log(formValues);
-    axios
-        .post(flareurl, formValues)
-        .then((response) => {
-           setkycDetails(response.data);
-           console.log(response.data); //prints the above json reults in console
-        })
-        .catch((error) => {
-            console.log(" error", error);
-        });
-};
+
+ 
+
+  const [url, setUrl] = useState(
+    'http://localhost:4000/kyc/subscriberinfo?msisdn=0114959286'
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    getKYCDetails();
-  }, []);
+    const fetchData = async () => {
+      setIsError(false);
+      setIsLoading(true);
+
+      try {
+        const result = await axios(url);
+
+ 
+        const fullNames =
+          result.data.body.FirstName +
+          ' ' +
+          result.data.body.MiddleName +
+          ' ' +
+          result.data.body.LastName;
+        setGender(result.data.body.Gender);
+        setFullName(fullNames);
+        const id = result.data.body.IDNumber;
+        setIDNumber(id);
+        const dobs = result.data.body.Birthday;
+        setDob(dobs);
+        console.log(result.data.body.Birthday, fullNames);
+      } catch (error) {
+        setIsError(true);
+      }
+
+      setIsLoading(false);
+    };
+
+    fetchData();
+  }, [url]);
 
 
-
-  return kycDetails ? (
+  return isLoading ? (
+    <CircularProgress></CircularProgress>
+  ) : isError ? (
+    <div>Something went wrong ...</div>
+  ) : (
     <div className={classes.container}>
       <Formik
         initialValues={{
           members: [
             {
-              id: Math.random(),
-              telephoneNumber: '',
-              role: '',
-              formalFullName: '',
+              formalFullName: fullName,
               familiarShortName: '',
-              emails: '',
-              dateOfBirth: '',
-              sex: '',
+              telephoneNumber: msisdn,
+              role: 'Admin',
+              emails: [],
+              dateOfBirth: dob,
+              sex: gender,
               otherSexText: '',
-              alternativeIdentifiers: '',
+              alternativeIdentifiers: IDNumber,
             },
           ],
         }}
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          console.log('onSubmit', JSON.stringify(values, null, 2));
+          // alert(JSON.stringify(values, null, 2));
+          registerUser(values);
         }}
       >
         {({ values, touched, errors, handleChange, handleBlur, isValid }) => (
-          <Form noValidate autoComplete="off">
+          <Form autoComplete="off">
             <FieldArray name="members">
               {({ push, remove }) => (
-                <React.Fragment>
-                  {values.members.map((p, index) => {
-                  
-                    const telephoneNumber = `members[${index}].telephoneNumber`;
-                    const touchedTelephoneNumber = getIn(
-                      touched,
-                      telephoneNumber
-                    );
-                    const errorTelephoneNumber = getIn(errors, telephoneNumber);
-
-                    const role = `members[${index}].role`;
-                    const touchedRole = getIn(touched, role);
-                    const errorRole = getIn(errors, role);
-
+                <div>
+                      {values.members.map((p, index) => {
+                        console.log("####Values",values);
                     const formalFullName = `members[${index}].formalFullName`;
-                    const touchedFormalFullName = getIn(
+                    const touchedformalFullName = getIn(
                       touched,
                       formalFullName
                     );
@@ -176,9 +189,20 @@ const getKYCDetails = () => {
                       familiarShortName
                     );
 
-                    const emails = `members[${index}].emails`;
-                    const touchedEmails = getIn(touched, emails);
-                    const errorEmails = getIn(errors, emails);
+                    const telephoneNumber = `members[${index}].telephoneNumber`;
+                    const touchedTelephoneNumber = getIn(
+                      touched,
+                      telephoneNumber
+                    );
+                    const errorTelephoneNumber = getIn(errors, telephoneNumber);
+
+                    const role = `members[${index}].role`;
+                    const touchedRole = getIn(touched, role);
+                    const errorRole = getIn(errors, role);
+
+                    const email = `members[${index}].emails`;
+                    const touchedEmails = getIn(touched, email);
+                    const errorEmails = getIn(errors, email);
 
                     const dateOfBirth = `members[${index}].dateOfBirth`;
                     const touchedDateOfBirth = getIn(touched, dateOfBirth);
@@ -203,33 +227,32 @@ const getKYCDetails = () => {
                     );
 
                     return (
-                      // <div key={p.id}>
-                      <React.Fragment key={ p.id}>
+                      <div key={p.index}>
+                        <Typography component="h1" variant="h4" align="center">
+                          New Member {p.index}
+                        </Typography>
                         <Grid container spacing={3}>
                           <Grid item xs={12} sm={6}>
-                            <TextField
-                              className={classes.field}
-                              margin="normal"
-                              label="Formal Full Name"
+                            <InputField
                               name={formalFullName}
                               value={p.formalFullName}
+                              label="Formal Full Name"
+                              fullWidth
                               required
                               helperText={
-                                touchedFormalFullName && errorFormalFullName
+                                touchedformalFullName && errorFormalFullName
                                   ? errorFormalFullName
                                   : ''
                               }
                               error={Boolean(
-                                touchedFormalFullName && errorFormalFullName
+                                touchedformalFullName && errorFormalFullName
                               )}
                               onChange={handleChange}
                               onBlur={handleBlur}
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                            <TextField
-                              className={classes.field}
-                              margin="normal"
+                            <InputField
                               label="Familiar Short Name"
                               name={familiarShortName}
                               value={p.familiarShortName}
@@ -246,17 +269,14 @@ const getKYCDetails = () => {
                               )}
                               onChange={handleChange}
                               onBlur={handleBlur}
+                              fullWidth
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                            <TextField
-                              className={classes.field}
-                              margin="normal"
+                            <InputField
                               label="Telephone Number"
                               name={telephoneNumber}
-                              // defaultValue = {msisdn}
-                              // {isLastStep ? 'Register' : 'Next'}
-                              value={p.index === 0 ?  msisdn  :  p.telephoneNumber}
+                              value={p.telephoneNumber}
                               required
                               helperText={
                                 touchedTelephoneNumber && errorTelephoneNumber
@@ -268,49 +288,158 @@ const getKYCDetails = () => {
                               )}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                            />
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <SelectField
-                              name={role}
-                              label="Role"
-                              data={roles}
                               fullWidth
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                            <TextField
-                              className={classes.field}
-                              margin="normal"
+                            <SelectField
+                              label="Role"
+                              name={role}
+                              value={p.role}
+                              required
+                              // helperText={
+                              //   touchedRole && errorRole ? errorRole : ''
+                              // }
+                              error={Boolean(touchedRole && errorRole)}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              data={roles}
+                              fullWidth
+                            />
+                          </Grid>
+
+                          <Grid item xs={12} sm={6}>
+                               <FieldArray
+                              
+                              name={`members.${index}.emails`}
+             render={arrayHelpers => (
+               <div>
+                 {values.members[index].emails && values.members[index].emails.length > 0 ? (
+                values.members[index].emails.map((mail, i) => (
+                     <div key={mail.i}>
+                       
+                            <InputField
+                              label="Email Address"
+                              name={`members.${index}.emails.${i}`}
+                              value={mail.emails}
+                              required
+                              helperText={
+                                touchedEmails && errorEmails
+                                  ? errorEmails
+                                  : ''
+                              }
+                              error={Boolean(
+                                touchedEmails && errorEmails
+                              )}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              fullWidth
+                            />
+                       <button
+                         type="button"
+                         onClick={() => arrayHelpers.remove(i)} // remove a friend from the list
+                       >
+                         -
+                       </button>
+                       <button
+                         type="button"
+                         onClick={() => arrayHelpers.push( '')} // insert an empty string at a position
+                       >
+                         +
+                       </button>
+                     </div>
+                   ))
+                 ) : (
+                   <button type="button" onClick={() => arrayHelpers.push('')}>
+                     {/* show this when user has removed all friends from the list */}
+                     Add Email
+                   </button>
+                 )}
+                
+               </div>
+             )}
+           />
+
+                            {/* <InputField
                               label="Emails"
                               name={emails}
                               value={p.emails}
                               required
                               helperText={
-                                touchedEmails && errorEmails ? errorEmails : ''
+                                touchedEmails && errorEmails
+                                  ? errorEmails
+                                  : ''
                               }
-                              error={Boolean(touchedEmails && errorEmails)}
+                              error={Boolean(
+                                touchedEmails && errorEmails
+                              )}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                            />
+                              fullWidth
+                            /> */}
                           </Grid>
-                          <Grid item xs={12} sm={6}>
+                          <Grid item xs={12} md={6}>
                             <DatePickerField
-                              name={dateOfBirth}
                               label="Date Of Birth"
-                              format="dd/MM/yy"
+                              name={dateOfBirth}
+                              value={p.dateOfBirth}
+                              required
+                              helperText={
+                                touchedDateOfBirth && errorDateOfBirth
+                                  ? errorDateOfBirth
+                                  : ''
+                              }
+                              error={Boolean(
+                                touchedDateOfBirth && errorDateOfBirth
+                              )}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              format="dd-MM-yyyy"
                               views={['year', 'month', 'date']}
+                              minDate={new Date('1900/01/01')}
+                              maxDate={new Date()}
                               fullWidth
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                            <TextField
-                              className={classes.field}
-                              margin="normal"
+                            <SelectField
+                              label="Sex"
+                              name={sex}
+                              value={p.sex}
+                              required
+                              helpertext={
+                                touchedSex && errorSex ? errorSex : ''
+                              }
+                              error={Boolean(touchedSex && errorSex)}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              data={sexes}
+                              fullWidth
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <InputField
+                              label="Other Sex Text"
+                              name={otherSexText}
+                              value={p.otherSexText}
+                              helperText={
+                                touchedOtherSexText && errorOtherSexText
+                                  ? errorOtherSexText
+                                  : ''
+                              }
+                              error={Boolean(
+                                touchedOtherSexText && errorOtherSexText
+                              )}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              fullWidth
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <InputField
                               label="Alternative Identifiers"
                               name={alternativeIdentifiers}
                               value={p.alternativeIdentifiers}
-                              required
                               helperText={
                                 touchedAlternativeIdentifiers &&
                                 errorAlternativeIdentifiers
@@ -323,50 +452,21 @@ const getKYCDetails = () => {
                               )}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                            />
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <SelectField
-                              name={sex}
-                              label="Gender"
-                              data={sexes}
                               fullWidth
                             />
                           </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <TextField
-                              className={classes.field}
-                              margin="normal"
-                              label="Other Sex Text"
-                              name={otherSexText}
-                              value={p.otherSexText}
-                              required
-                              helperText={
-                                touchedOtherSexText && errorOtherSexText
-                                  ? errorOtherSexText
-                                  : ''
-                              }
-                              error={Boolean(
-                                touchedOtherSexText && errorOtherSexText
-                              )}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            />
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <Button
-                              className={classes.button}
-                              margin="normal"
-                              type="button"
-                              color="secondary"
-                              variant="outlined"
-                              onClick={() => remove(index)}
-                            >
-                              Remove
-                            </Button>
-                          </Grid>
                         </Grid>
-                  </React.Fragment>
+                        <Button
+                          className={classes.button}
+                          margin="normal"
+                          type="button"
+                          color="secondary"
+                          variant="outlined"
+                          onClick={() => remove(index)}
+                        >
+                          Remove
+                        </Button>
+                      </div>
                     );
                   })}
                   <Button
@@ -375,12 +475,11 @@ const getKYCDetails = () => {
                     variant="outlined"
                     onClick={() =>
                       push({
-                        id: Math.random(),
-                        telephoneNumber: '',
-                        role: '',
                         formalFullName: '',
                         familiarShortName: '',
-                        emails: '',
+                        telephoneNumber: '',
+                        role: '',
+                        emails: [],
                         dateOfBirth: '',
                         sex: '',
                         otherSexText: '',
@@ -390,7 +489,7 @@ const getKYCDetails = () => {
                   >
                     Add
                   </Button>
-          </React.Fragment>
+                </div>
               )}
             </FieldArray>
             <Divider style={{ marginTop: 20, marginBottom: 20 }} />
@@ -422,7 +521,7 @@ const getKYCDetails = () => {
         )}
       </Formik>
     </div>
-  ):<CircularProgress></CircularProgress>;
+  );
 };
 
 export default MyForm;
