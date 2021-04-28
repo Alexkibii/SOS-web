@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom';
+ import moment from "moment";
+
+
+
+
 import {
   Divider,
   Button,
@@ -13,6 +18,7 @@ import { InputField, SelectField, DatePickerField } from './FormFields';
 import { FieldArray, Form, Field, Formik, getIn, useFormikContext } from 'formik';
 
 import * as Yup from 'yup';
+import FormikRadioGroup from './FormFields/FormikRadioGroup';
 
 
 
@@ -28,26 +34,19 @@ const roles = [
   },
 ];
 
-const sexes = [
-  {
-    value: 'M',
-    label: 'Male',
-  },
-  {
-    value: 'F',
-    label: 'Female',
-  },
-  {
-    value: 'Other',
-    label: 'Other',
-  },
-];
+  const options = [
+    { value: "MALE", label: "Male" },
+    { value: "FEMALE", label: "Female" },
+    { value: "OTHER", label: "Other" }
+  ];
+
 
 const validationSchema = Yup.object().shape({
   people: Yup.array().of(
     Yup.object().shape({
       formalFullName: Yup.string().required('First name is required'),
       familiarShortName: Yup.string().required('Last name is required'),
+      emails: Yup.array().required('Email is required'),
     })
   ),
 });
@@ -81,10 +80,10 @@ const MyForm = (props) => {
   const [fullName, setFullName] = useState('');
   const [IDNumber, setIDNumber] = useState('');
   const [dob, setDob] = useState('');
-  const [gender, setGender] = useState('');
+  const [gender, setGender] = useState('FEMALE');
 
   const registerUser = (values) => {
-    console.log(values);
+    // console.log(values);
     axios
       .post(registerurl, values)
       .then((response) => {
@@ -119,14 +118,27 @@ const MyForm = (props) => {
           result.data.body.MiddleName +
           ' ' +
           result.data.body.LastName;
-        setGender(result.data.body.Gender);
+
+        if (result.data.body.Gender === 'M') {
+          setGender('MALE');
+        } else if (result.data.body.Gender === 'F') {
+          setGender('FEMALE');
+        } else { setGender('OTHER'); }
+       
         setFullName(fullNames);
         const id = result.data.body.IDNumber;
         setIDNumber(id);
         const dobs = result.data.body.Birthday;
-        setDob(dobs);
-        console.log(result.data.body.Birthday, fullNames);
+        console.log(dobs);
+           
+
+             console.log('NEWS-DATE',moment(dobs, 'DD-MM-YYYY').format('YYYY-MM-DD'))
+ 
+
+       setDob( moment(dobs, 'DD-MM-YYYY').format('YYYY-MM-DD'));
+  
       } catch (error) {
+        console.log('Error ',error);
         setIsError(true);
       }
 
@@ -137,6 +149,8 @@ const MyForm = (props) => {
   }, [url]);
 
 
+
+
   return isLoading ? (
     <CircularProgress></CircularProgress>
   ) : isError ? (
@@ -144,18 +158,20 @@ const MyForm = (props) => {
   ) : (
     <div className={classes.container}>
       <Formik
-        initialValues={{
+            initialValues={{
+            policyName: "SAFARICOM_HOUSEHOLD",
           members: [
             {
               formalFullName: fullName,
               familiarShortName: '',
               telephoneNumber: msisdn,
-              role: 'Admin',
+              role: 'ADMIN',
               emails: [],
               dateOfBirth: dob,
               sex: gender,
-              otherSexText: '',
-              alternativeIdentifiers: IDNumber,
+          
+              otherSexText: 'N/A',
+              alternativeIdentifiers:[IDNumber] ,
             },
           ],
         }}
@@ -165,7 +181,7 @@ const MyForm = (props) => {
           registerUser(values);
         }}
       >
-        {({ values, touched, errors, handleChange, handleBlur, isValid }) => (
+        {({isSubmitting,  values, touched, setFieldValue,  errors, handleChange, handleBlur, isValid }) => (
           <Form autoComplete="off">
             <FieldArray name="members">
               {({ push, remove }) => (
@@ -359,24 +375,6 @@ const MyForm = (props) => {
                </div>
              )}
            />
-
-                            {/* <InputField
-                              label="Emails"
-                              name={emails}
-                              value={p.emails}
-                              required
-                              helperText={
-                                touchedEmails && errorEmails
-                                  ? errorEmails
-                                  : ''
-                              }
-                              error={Boolean(
-                                touchedEmails && errorEmails
-                              )}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              fullWidth
-                            /> */}
                           </Grid>
                           <Grid item xs={12} md={6}>
                             <DatePickerField
@@ -394,28 +392,21 @@ const MyForm = (props) => {
                               )}
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              format="dd-MM-yyyy"
+                              format="yyyy-MM-dd"
                               views={['year', 'month', 'date']}
-                              minDate={new Date('1900/01/01')}
+                              minDate={new Date('1900-01-01')}
                               maxDate={new Date()}
                               fullWidth
                             />
                           </Grid>
                           <Grid item xs={12} sm={6}>
-                            <SelectField
-                              label="Sex"
-                              name={sex}
-                              value={p.sex}
-                              required
-                              helpertext={
-                                touchedSex && errorSex ? errorSex : ''
-                              }
-                              error={Boolean(touchedSex && errorSex)}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              data={sexes}
-                              fullWidth
-                            />
+                           
+      <Field
+               
+            name={sex}
+            component={FormikRadioGroup}
+            options={options}
+          />
                           </Grid>
                           <Grid item xs={12} sm={6}>
                             <InputField
@@ -460,11 +451,11 @@ const MyForm = (props) => {
                           className={classes.button}
                           margin="normal"
                           type="button"
-                          color="secondary"
-                          variant="outlined"
+                          color="primary"
+                          variant="contained"
                           onClick={() => remove(index)}
                         >
-                          Remove
+                          Remove Member
                         </Button>
                       </div>
                     );
@@ -472,7 +463,8 @@ const MyForm = (props) => {
                   <Button
                     className={classes.button}
                     type="button"
-                    variant="outlined"
+                   color="primary"
+              variant="contained"
                     onClick={() =>
                       push({
                         formalFullName: '',
@@ -487,7 +479,7 @@ const MyForm = (props) => {
                       })
                     }
                   >
-                    Add
+                    Add Member
                   </Button>
                 </div>
               )}
@@ -503,7 +495,7 @@ const MyForm = (props) => {
               submit
             </Button>
             <Divider style={{ marginTop: 20, marginBottom: 20 }} />
-            {debug && (
+            {/* {debug && (
               <>
                 <pre style={{ textAlign: 'left' }}>
                   <strong>Values</strong>
@@ -516,7 +508,7 @@ const MyForm = (props) => {
                   {JSON.stringify(errors, null, 2)}
                 </pre>
               </>
-            )}
+            )} */}
           </Form>
         )}
       </Formik>
