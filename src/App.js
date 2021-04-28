@@ -1,5 +1,5 @@
 import React from 'react';
-import Home from './Home';
+import Register from './Register';
 import Subscription from '././components/Subscription/Subscription';
 import {
   BrowserRouter as Router,
@@ -11,14 +11,14 @@ import {
  function App() {
    return(
      <Router>
-       {/* <Switch>
+       <Switch>
          <Route path="/">
-           <Home />
-          </Route> */}
+           <Register />
+          </Route>
           <Route path="/sub">
             <Subscription />
           </Route>
-       {/* </Switch> */}
+       </Switch>
           
      </Router>
    ) 

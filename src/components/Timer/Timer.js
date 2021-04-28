@@ -49,7 +49,7 @@ export default function CountdownTimer() {
         <CountdownCircleTimer
           isPlaying
           duration={5}
-          colors={"#FF0000"}
+          colors={"#FFFFFF"}
         >
           {RenderTime}
         </CountdownCircleTimer>
